@@ -16,7 +16,7 @@ done &&
     git standing &&
     git fetch upstream "${MASTER_BRANCH}" &&
     git checkout "upstream/${MASTER_BRANCH}" &&
-    git checkout -b scratch/$(uuidgen) &&
+    git checkout -b scratch_$(uuidgen) &&
     if [ -z "${MESSAGE}" ] && [ -z "${MESSAGE_FILE}" ]
     then
         git commit --allow-empty
