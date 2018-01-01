@@ -1,4 +1,5 @@
 #!/bin/sh
 
 cd /opt/docker/workspace &&
-    git commit -am "shutdown commit"
+    git checkout -b cleanup_$(uuidgen) &&
+    git commit -am "shutdown cleanup commit"
