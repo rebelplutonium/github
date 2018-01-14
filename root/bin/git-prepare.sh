@@ -1,6 +1,6 @@
 #!/bin/sh
 
-git commit --all --allow-empty --allow-empty-message &&
+git commit --all --allow-empty --message "preparation commit" &&
     if git refresh
     then
         git checkout -b scratch_$(uuidgen) &&
