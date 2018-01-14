@@ -31,12 +31,10 @@ EOF
     git -C /opt/docker/workspace remote set-url --push upstream no_push &&
     git -C /opt/docker/workspace remote add origin origin:${ORIGIN_ORGANIZATION}/${ORIGIN_REPOSITORY}.git &&
     git -C /opt/docker/workspace remote add report report:${REPORT_ORGANIZATION}/${REPORT_REPOSITORY}.git &&
-    (
-        (
-            git -C /opt/docker/workspace fetch upstream ${MASTER_BRANCH} &&
-                git -C /opt/docker/workspace checkout upstream/${MASTER_BRANCH}
-        ) ||
-        (
+    if [ -z "${CHECKOUT_BRANCH}" ]
+    then
+        if ! (git -C /opt/docker/workspace fetch upstream ${MASTER_BRANCH} && git -C /opt/docker/workspace checkout upstream/${MASTER_BRANCH})
+        then
             touch /opt/docker/workspace/README.md &&
                 touch /opt/docker/workspace/.gitignore &&
                 git -C /opt/docker/workspace add README.md .gitignore &&
@@ -45,9 +43,15 @@ EOF
                 git -C /opt/docker/workspace commit -am "init" &&
                 mv /opt/docker/workspace/.git/hooks/post-commit.backup /opt/docker/workspace/.git/post-commit &&
                 git -C /opt/docker/workspace push report ${MASTER_BRANCH}
-        )
-    ) &&
-    git -C /opt/docker/workspace checkout -b scratch/$(uuidgen) &&
+        fi &&
+            git checkout -b init_$(uuidgen)
+    else
+        if ! ( git -C /opt/docker/workspace fetch origin ${CHECKOUT_BRANCH} && git -C /opt/docker/workspace checkout origin/${CHECKOUT_BRANCH} )
+        then
+            echo The CHECKOUT_BRANCH ${CHECKOUT_BRANCH} is not available. &&
+                exit 64
+        fi
+    fi &&
     cat >> /home/user/.bashrc <<EOF
 export MASTER_BRANCH=${MASTER_BRANCH}    
 EOF
