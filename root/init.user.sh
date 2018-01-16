@@ -44,7 +44,7 @@ EOF
                 mv /opt/docker/workspace/.git/hooks/post-commit.backup /opt/docker/workspace/.git/post-commit &&
                 git -C /opt/docker/workspace push report ${MASTER_BRANCH}
         fi &&
-            git checkout -b init_$(uuidgen)
+            git -C /opt/docker/workspace checkout -b init_$(uuidgen)
     else
         if ! ( git -C /opt/docker/workspace fetch origin ${CHECKOUT_BRANCH} && git -C /opt/docker/workspace checkout origin/${CHECKOUT_BRANCH} )
         then
