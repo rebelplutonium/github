@@ -52,6 +52,16 @@ EOF
                 exit 64
         fi
     fi &&
+    TEMP=$(mktemp -d) &&
+    echo "${GPG_SECRET_KEY}" > ${TEMP}/gpg-secret-key &&
+    gpg --batch --import ${TEMP}/gpg-secret-key &&
+    echo "${GPG2_SECRET_KEY}" > ${TEMP}/gpg2-secret-key &&
+    gpg2 --batch --import ${TEMP}/gpg2-secret-key &&
+    echo "${GPG_OWNER_TRUST}" > ${TEMP}/gpg-owner-trust &&
+    gpg --batch --import-ownertrust ${TEMP}/gpg-owner-trust &&
+    echo "${GPG2_OWNER_TRUST}" > ${TEMP}/gpg2-owner-trust &&
+    gpg2 --batch --import-ownertrust ${TEMP}/gpg2-owner-trust &&
+    rm -rf ${TEMP} &&
     cat >> /home/user/.bashrc <<EOF
 export MASTER_BRANCH=${MASTER_BRANCH}    
 EOF
