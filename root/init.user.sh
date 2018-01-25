@@ -62,6 +62,7 @@ EOF
     echo "${GPG2_OWNER_TRUST}" > ${TEMP}/gpg2-owner-trust &&
     gpg2 --batch --import-ownertrust ${TEMP}/gpg2-owner-trust &&
     rm -rf ${TEMP} &&
+    git -C /opt/docker/workspace config --global user.signingkey ${GPG_KEY_ID} &&
     cat >> /home/user/.bashrc <<EOF
 export MASTER_BRANCH=${MASTER_BRANCH}    
 EOF
