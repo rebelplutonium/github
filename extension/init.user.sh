@@ -24,15 +24,16 @@ User git
 IdentityFile ~/.ssh/report_id_rsa
 EOF
     ) &&
-    ln -sf /usr/local/bin/post-commit /opt/docker/workspace/.git/hooks/post-commit &&
-    git -C /opt/docker/workspace config user.name "${COMMITTER_NAME}" &&
-    git -C /opt/docker/workspace config user.email "${COMMITTER_EMAIL}" &&
-    git -C /opt/docker/workspace remote add upstream upstream:${UPSTREAM_ORGANIZATION}/${UPSTREAM_REPOSITORY}.git &&
-    git -C /opt/docker/workspace remote set-url --push upstream no_push &&
-    git -C /opt/docker/workspace remote add origin origin:${ORIGIN_ORGANIZATION}/${ORIGIN_REPOSITORY}.git &&
-    git -C /opt/docker/workspace remote add report report:${REPORT_ORGANIZATION}/${REPORT_REPOSITORY}.git &&
-    git -C /opt/docker/workspace fetch upstream ${MASTER_BRANCH} &&
-    git -C /opt/docker/workspace checkout -b issue-$(printf "%05d" ${ISSUE_NUMBER})-$(uuidgen) &&
+    ln -sf /usr/local/bin/post-commit ${CLOUD9_WORKSPACE}/.git/hooks/post-commit &&
+    git -C ${CLOUD9_WORKSPACE} git init &&
+    git -C ${CLOUD9_WORKSPACE} config user.name "${COMMITTER_NAME}" &&
+    git -C ${CLOUD9_WORKSPACE} config user.email "${COMMITTER_EMAIL}" &&
+    git -C ${CLOUD9_WORKSPACE} remote add upstream upstream:${UPSTREAM_ORGANIZATION}/${UPSTREAM_REPOSITORY}.git &&
+    git -C ${CLOUD9_WORKSPACE} remote set-url --push upstream no_push &&
+    git -C ${CLOUD9_WORKSPACE} remote add origin origin:${ORIGIN_ORGANIZATION}/${ORIGIN_REPOSITORY}.git &&
+    git -C ${CLOUD9_WORKSPACE} remote add report report:${REPORT_ORGANIZATION}/${REPORT_REPOSITORY}.git &&
+    git -C ${CLOUD9_WORKSPACE} fetch upstream ${MASTER_BRANCH} &&
+    git -C ${CLOUD9_WORKSPACE} checkout -b issue-$(printf "%05d" ${ISSUE_NUMBER})-$(uuidgen) &&
     TEMP=$(mktemp -d) &&
     echo "${GPG_SECRET_KEY}" > ${TEMP}/gpg-secret-key &&
     gpg --batch --import ${TEMP}/gpg-secret-key &&
@@ -43,7 +44,7 @@ EOF
     echo "${GPG2_OWNER_TRUST}" > ${TEMP}/gpg2-owner-trust &&
     gpg2 --batch --import-ownertrust ${TEMP}/gpg2-owner-trust &&
     rm -rf ${TEMP} &&
-    git -C /opt/docker/workspace config --global user.signingkey ${GPG_KEY_ID} &&
+    git -C ${CLOUD9_WORKSPACE} config --global user.signingkey ${GPG_KEY_ID} &&
     cat >> /home/user/.bashrc <<EOF
 export MASTER_BRANCH=${MASTER_BRANCH}    
 EOF
