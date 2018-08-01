@@ -40,8 +40,8 @@ IdentityFile ~/.ssh/report_id_rsa
 EOF
         )
     fi &&
-    ln -sf /usr/local/bin/post-commit ${CLOUD9_WORKSPACE}/.git/hooks/post-commit &&
     git -C ${CLOUD9_WORKSPACE} git init &&
+    ln -sf /usr/local/bin/post-commit ${CLOUD9_WORKSPACE}/.git/hooks/post-commit &&
     git -C ${CLOUD9_WORKSPACE} config user.name "${COMMITTER_NAME}" &&
     git -C ${CLOUD9_WORKSPACE} config user.email "${COMMITTER_EMAIL}" &&
     git -C ${CLOUD9_WORKSPACE} remote add upstream upstream:${UPSTREAM_ORGANIZATION}/${UPSTREAM_REPOSITORY}.git &&
