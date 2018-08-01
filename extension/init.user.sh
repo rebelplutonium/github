@@ -48,7 +48,15 @@ EOF
     git -C ${CLOUD9_WORKSPACE} remote set-url --push upstream no_push &&
     git -C ${CLOUD9_WORKSPACE} remote add origin origin:${ORIGIN_ORGANIZATION}/${ORIGIN_REPOSITORY}.git &&
     git -C ${CLOUD9_WORKSPACE} remote add report report:${REPORT_ORGANIZATION}/${REPORT_REPOSITORY}.git &&
-    git -C ${CLOUD9_WORKSPACE} fetch upstream ${MASTER_BRANCH} &&
+    if [ ! -z "${UPSTREAM_BRANCH}" ] && [ -z "${ORIGIN_BRANCH}" ]
+    then
+        git -C ${CLOUD9_WORKSPACE} fetch upstream ${UPSTREAM_BRANCH} &&
+            git checkout upstream/${UPSTREAM_BRANCH}
+    elif [ ! -z "${ORIGIN_BRANCH}" ]
+    then
+        git -C ${CLOUD9_WORKSPACE} fetch origin ${ORIGIN_BRANCH} &&
+            git checkout origin ${ORIGIN_BRANCH}
+    fi &&
     git -C ${CLOUD9_WORKSPACE} checkout -b issue-$(printf "%05d" ${ISSUE_NUMBER})-$(uuidgen) &&
     TEMP=$(mktemp -d) &&
     echo "${GPG_SECRET_KEY}" > ${TEMP}/gpg-secret-key &&
@@ -62,6 +70,7 @@ EOF
     rm -rf ${TEMP} &&
     git -C ${CLOUD9_WORKSPACE} config --global user.signingkey $(gpg --list-keys | grep "^pub" | sed -e "s#^.*/##" -e "s# .*\$##") &&
     cat >> /home/user/.bashrc <<EOF
-export MASTER_BRANCH=${MASTER_BRANCH}    
+export UPSTREAM_BRANCH=${UPSTREAM_BRANCH} &&
+export ORIGIN_BRANCH=${ORIGIN_BRANCH}
 EOF
 
