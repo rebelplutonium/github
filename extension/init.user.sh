@@ -3,27 +3,43 @@
 echo "${UPSTREAM_ID_RSA}" > /home/user/.ssh/upstream_id_rsa &&
     echo "${ORIGIN_ID_RSA}" > /home/user/.ssh/origin_id_rsa &&
     echo "${REPORT_ID_RSA}" > /home/user/.ssh/report_id_rsa &&
-    ssh-keyscan -p ${HOST_PORT} "${HOST_NAME}" > /home/user/.ssh/known_hosts &&
-    (cat > /home/user/.ssh/config <<EOF
+    touch /home/user/.ssh/config &&
+    if [ ! -z "${UPSTREAM_HOST}" ] && [ ! -z "${UPSTREAM_PORT}" ]
+    then
+        ssh-keyscan -p ${UPSTREAM_PORT} "${UPSTREAM_HOST}" > /home/user/.ssh/known_hosts &&
+            (cat >> /home/user/.ssh/config <<EOF
 Host upstream
 HostName ${UPSTREAM_HOST}
 Port ${UPSTREAM_PORT}
 User git
 IdentityFile ~/.ssh/upstream_id_rsa
-
+EOF
+        )
+    fi &&
+    if [ ! -z "${ORIGIN_HOST}" ] && [ ! -z "${ORIGIN_PORT}" ]
+    then
+        ssh-keyscan -p ${ORIGIN_PORT} "${ORIGIN_HOST}" > /home/user/.ssh/known_hosts &&
+            (cat >> /home/user/.ssh/config <<EOF
 Host origin
 HostName ${ORIGIN_HOST}
 Port ${ORIGIN_PORT}
 User git
 IdentityFile ~/.ssh/origin_id_rsa
-
+EOF
+        )
+    fi &&
+    if [ ! -z "${REPORT_HOST}" ] && [ ! -z "${REPORT_PORT}" ]
+    then
+        ssh-keyscan -p ${REPORT_PORT} "${REPORT_HOST}" > /home/user/.ssh/known_hosts &&
+            (cat >> /home/user/.ssh/config <<EOF
 Host report
 HostName ${REPORT_HOST}
 Port ${REPORT_PORT}
 User git
 IdentityFile ~/.ssh/report_id_rsa
 EOF
-    ) &&
+        )
+    fi &&
     ln -sf /usr/local/bin/post-commit ${CLOUD9_WORKSPACE}/.git/hooks/post-commit &&
     git -C ${CLOUD9_WORKSPACE} git init &&
     git -C ${CLOUD9_WORKSPACE} config user.name "${COMMITTER_NAME}" &&
@@ -44,7 +60,7 @@ EOF
     echo "${GPG2_OWNER_TRUST}" > ${TEMP}/gpg2-owner-trust &&
     gpg2 --batch --import-ownertrust ${TEMP}/gpg2-owner-trust &&
     rm -rf ${TEMP} &&
-    git -C ${CLOUD9_WORKSPACE} config --global user.signingkey ${GPG_KEY_ID} &&
+    git -C ${CLOUD9_WORKSPACE} config --global user.signingkey $(gpg --list-keys | grep "^pub" | sed -e "s#^.*/##" -e "s# .*\$##") &&
     cat >> /home/user/.bashrc <<EOF
 export MASTER_BRANCH=${MASTER_BRANCH}    
 EOF
