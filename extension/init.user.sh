@@ -60,7 +60,6 @@ EOF
         git -C ${CLOUD9_WORKSPACE} fetch origin ${ORIGIN_BRANCH} &&
             git -C ${CLOUD9_WORKSPACE} checkout origin/${ORIGIN_BRANCH}
     fi &&
-    git -C ${CLOUD9_WORKSPACE} checkout -b issue-$(printf "%05d" ${ISSUE_NUMBER})-$(uuidgen) &&
     TEMP=$(mktemp -d) &&
     echo "${GPG_SECRET_KEY}" > ${TEMP}/gpg-secret-key &&
     gpg --batch --import ${TEMP}/gpg-secret-key &&
