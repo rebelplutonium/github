@@ -54,11 +54,11 @@ EOF
     if [ ! -z "${UPSTREAM_BRANCH}" ] && [ -z "${ORIGIN_BRANCH}" ]
     then
         git -C ${CLOUD9_WORKSPACE} fetch upstream ${UPSTREAM_BRANCH} &&
-            git checkout upstream/${UPSTREAM_BRANCH}
+            git -C ${CLOUD9_OWORKSPACE} checkout upstream/${UPSTREAM_BRANCH}
     elif [ ! -z "${ORIGIN_BRANCH}" ]
     then
         git -C ${CLOUD9_WORKSPACE} fetch origin ${ORIGIN_BRANCH} &&
-            git checkout origin ${ORIGIN_BRANCH}
+            git -C ${CLOUD9_WORKSPACE} checkout origin ${ORIGIN_BRANCH}
     fi &&
     git -C ${CLOUD9_WORKSPACE} checkout -b issue-$(printf "%05d" ${ISSUE_NUMBER})-$(uuidgen) &&
     TEMP=$(mktemp -d) &&
