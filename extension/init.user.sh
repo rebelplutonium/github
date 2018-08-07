@@ -13,6 +13,7 @@ HostName ${UPSTREAM_HOST}
 Port ${UPSTREAM_PORT}
 User git
 IdentityFile ~/.ssh/upstream_id_rsa
+
 EOF
         )
     fi &&
@@ -25,6 +26,7 @@ HostName ${ORIGIN_HOST}
 Port ${ORIGIN_PORT}
 User git
 IdentityFile ~/.ssh/origin_id_rsa
+
 EOF
         )
     fi &&
@@ -37,11 +39,12 @@ HostName ${REPORT_HOST}
 Port ${REPORT_PORT}
 User git
 IdentityFile ~/.ssh/report_id_rsa
+
 EOF
         )
     fi &&
     git -C ${CLOUD9_WORKSPACE} init &&
-    ln -sf /usr/local/bin/post-commit ${CLOUD9_WORKSPACE}/.git/hooks/post-commit &&
+    ln -sf /opt/cloud9/bin/post-commit ${CLOUD9_WORKSPACE}/.git/hooks/post-commit &&
     git -C ${CLOUD9_WORKSPACE} config user.name "${COMMITTER_NAME}" &&
     git -C ${CLOUD9_WORKSPACE} config user.email "${COMMITTER_EMAIL}" &&
     git -C ${CLOUD9_WORKSPACE} remote add upstream upstream:${UPSTREAM_ORGANIZATION}/${UPSTREAM_REPOSITORY}.git &&
