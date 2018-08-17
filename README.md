@@ -61,5 +61,7 @@ I created 3 remotes - each with their own responsibilities:
    If I accidentally typed in `git push report garbage` it would ask me for my passphrase - which would give me another opportunity to back out from a mistake.
    If I on purpose typed `git push report new_feature` it would ask me for my passphrase.  I would type it.  The code would be pushed.  I would create a merge request.  From the point of view of my reviewers, I pushed to the gold standard repository.
 
+Once the container is running, the terminals are configured to show you information about git status.
+Some custom git scripts are added to the PATH.
 
 
